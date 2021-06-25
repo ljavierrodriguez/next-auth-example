@@ -6,10 +6,10 @@ import Providers from "next-auth/providers"
 export default NextAuth({
   // https://next-auth.js.org/configuration/providers
   providers: [
-    Providers.Email({
+    /* Providers.Email({
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
-    }),
+    }), */
     // Temporarily removing the Apple provider from the demo site as the
     // callback URL for it needs updating due to Vercel changing domains
     /*
@@ -23,6 +23,39 @@ export default NextAuth({
       },
     }),
     */
+    Providers.Credentials({
+      // The name to display on the sign in form (e.g. 'Sign in with...')
+      name: 'Credentials',
+      // The credentials is used to generate a suitable form on the sign in page.
+      // You can specify whatever fields you are expecting to be submitted.
+      // e.g. domain, username, password, 2FA token, etc.
+      credentials: {
+        email: { label: "Username", type: "email", placeholder: "example@company.com" },
+        password: {  label: "Password", type: "password" }
+      },
+      async authorize(credentials, req) {
+        // You need to provide your own logic here that takes the credentials
+        // submitted and returns either a object representing a user or value
+        // that is false/null if the credentials are invalid.
+        // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
+        // You can also use the `req` object to obtain additional parameters
+        // (i.e., the request IP address) 
+        console.log(credentials);
+        const res = await fetch("https://api.mercadolegal.cl/api/auth/signin", {
+          method: 'POST',
+          body: JSON.stringify(credentials),
+          headers: { "Content-Type": "application/json" }
+        })
+        const user = await res.json()
+        
+        // If no error and we have user data, return it
+        if (res.ok && user) {
+          return user
+        }
+        // Return null if user data could not be retrieved
+        return null
+      }
+    }),
     Providers.Facebook({
       clientId: process.env.FACEBOOK_ID,
       clientSecret: process.env.FACEBOOK_SECRET,
@@ -93,7 +126,7 @@ export default NextAuth({
   // pages is not specified for that route.
   // https://next-auth.js.org/configuration/pages
   pages: {
-    // signIn: '/auth/signin',  // Displays signin buttons
+    signIn: '/auth/signin',  // Displays signin buttons
     // signOut: '/auth/signout', // Displays form with sign out button
     // error: '/auth/error', // Error code passed in query string as ?error=
     // verifyRequest: '/auth/verify-request', // Used for check email page
@@ -116,7 +149,7 @@ export default NextAuth({
   
   // You can set the theme to 'light', 'dark' or use 'auto' to default to the
   // whatever prefers-color-scheme is set to in the browser. Default is 'auto'
-  theme: 'light',
+  theme: 'dark',
 
   // Enable debug messages in the console if you are having problems
   debug: false,
