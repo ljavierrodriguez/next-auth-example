@@ -1,9 +1,11 @@
 import { getCsrfToken, getProviders, signIn } from 'next-auth/client'
+import { useEffect } from 'react';
 
 export default function SignIn({ providers, csrfToken }) {
+
   return (
     <>
-    <form method='post' action='https://3000-yellow-vole-8b5qljo7.ws-us08.gitpod.io/api/auth/callback/credentials'>
+    <form method='post' action='https://3000-yellow-vole-8b5qljo7.ws-us09.gitpod.io//api/auth/callback/credentials'>
       <input name='csrfToken' type='hidden' defaultValue={csrfToken}/>
       <label>
         Username
@@ -30,7 +32,7 @@ export async function getServerSideProps(context){
   return {
     props: { 
         providers, 
-        csrfToken: await getCsrfToken(context) 
+        csrfToken: await getCsrfToken(context),
     }
   }
 }
