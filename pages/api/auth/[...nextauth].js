@@ -40,7 +40,7 @@ export default NextAuth({
         // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address) 
-        console.log(credentials);
+        // console.log(credentials);
         const res = await fetch("https://api.mercadolegal.cl/api/auth/signin", {
           method: 'POST',
           body: JSON.stringify(credentials),
@@ -138,7 +138,7 @@ export default NextAuth({
   // https://next-auth.js.org/configuration/callbacks
   callbacks: {
     // async signIn(user, account, profile) { return true },
-    // async redirect(url, baseUrl) { return baseUrl },
+    async redirect(url, baseUrl) { return baseUrl},
     // async session(session, user) { return session },
     // async jwt(token, user, account, profile, isNewUser) { return token }
   },
